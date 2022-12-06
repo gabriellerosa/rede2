@@ -15,28 +15,34 @@ address_game = dict()
 
 class Game:
     tabuleiro = []
-    attempt = 0  # int: Qnt de tentativas que a pessoa fez
-    end_game = 0  # int: 1 = jogo acabou
+    attempt = 0 # int: Qnt de tentativas que a pessoa fez
+    need_coloring = False # se a ultima tentativa foi boa TRUE senao FALSE
 
-    def guess(self, word):
+    # Recebe uma word que é a string que representa o palpite feito pelo client
+    def guess(self,word):
 
+        # só devemos adicionar a palavra se ela for de fato uma palavra de tamanho 5
+        if(len(word) != 5):
+            return "4" # Palavra nao permitida
+
+        # palavra valida entao ela vai precisar colorir
+        self.need_coloring = True
         self.tabuleiro.append(word)
-        ignoring_accent = unicodedata.normalize(
-            'NFKD', day_word).encode('ASCII', 'ignore').decode()
 
-        if (word == ignoring_accent):
-            end_game = 1
-            return "1"  # 'Voce ganhou'
+        # funcao padrao python para ignorar o acento das palavras, portanto, ética == etica
+        ignoring_accent = unicodedata.normalize('NFKD', day_word).encode('ASCII', 'ignore').decode()
+
+        # Se as palavras forem iguais, logo o jogo acaba pois a pessoa ganhou
+        if(word == ignoring_accent):
+            return "1" # 'Voce ganhou'
         else:
-            self.attempt += 1
-            if (self.attempt >= 6):
-                end_game = 1
-                return "2"  # 'Tentou todas as palavras e perdeu'
-            return "3"     # 'Palavra errada'
-        
+            self.attempt+=1
+            if(self.attempt < 6):
+                return "3"  # 'Tentou uma palavra mas ela está errada'
+            return "2"      # 'Tentou todas as palavras e perdeu'
 
-    def colorize(self, palavra):
-
+    # retorna a ultima palavra a ser colorida (a ultima adicionada)
+    def colorir(self, palavra):
         text = ""
         freq = dict()
 
@@ -61,19 +67,27 @@ class Game:
                 text += colored(palavra[i], "yellow")
             else:
                 text += palavra[i]
-                
+
         return text
 
     def show(self):
 
-        # colorize as palavras
-        self.tabuleiro[-1] = self.colorize(self.tabuleiro[-1])
+        # se a ultima tentativa foi valida
+        if(self.need_coloring):
+            # Colorir as palavras: Vamos colorir a ultima palavra adicionada
+            self.tabuleiro[-1] = self.colorir(self.tabuleiro[-1])
+
+        self.need_coloring = False
 
         # Transformar o array de strings numa string unica
         board = ""
         for i in self.tabuleiro:
             board += i
             board += "\n"
+
+        # Condicao para evitar o envio do board vazio, pois o cliente vai continuar esperando um board e nunca chegará. O envio vazio pode acontecer quando a pessoa inicia com uma palavra invalida
+        if(board == ""):
+            return "/n"
 
         return board
 
@@ -93,7 +107,7 @@ def accept_wrapper(sock):
 
 
 def service_connection(key, mask):
-    
+
     sock = key.fileobj
     data = key.data
 
@@ -102,8 +116,11 @@ def service_connection(key, mask):
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
 
+            # recv_data.decode() = palavra que o cliente enviou
             result = address_game[data.addr].guess(recv_data.decode())
+
             board = address_game[data.addr].show()
+
             data.outb = str.encode(result)
             data.outc = str.encode(board)
 
@@ -146,7 +163,7 @@ try:
                 accept_wrapper(key.fileobj)
             else:
                 service_connection(key, mask)
-                
+
 except KeyboardInterrupt:
     print("Caught keyboard interrupt, exiting")
 finally:
