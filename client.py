@@ -14,8 +14,6 @@ while True:
     print('Díga a palavra ai vá')
     word = input()
 
-    print('Encode:')
-    print(word.encode())
 # Enviar dados para o servidor, portanto, enviando a palavra
     obj_socket.send(word.encode())
 
@@ -23,11 +21,12 @@ while True:
     data = obj_socket.recv(1024)
 
     print('Menssagem ecoada:')
-    print(data.decode())
 
     if(data.decode() == '1'):
         print('Ganhou')
     elif(data.decode() == '2'):
         print('Perdeu')
+        obj_socket.close()
+        break
     else:
         print('Palavra errada')

@@ -21,7 +21,7 @@ class Game:
             return "1" # 'Voce ganhou'
         else:
             self.attempt+=1
-            if(self.attempt > 5):
+            if(self.attempt >= 5):
                 end_game = 1
                 return "2" # 'Tentou todas as palavras e perdeu'
             return "3"     # 'Palavra errada'
@@ -48,9 +48,7 @@ def service_connection(key, mask):
     if mask & selectors.EVENT_READ:
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
-            # data.outb += recv_data
-            print('recv_data.decode()')
-            print(recv_data.decode())
+
             data.outb += str.encode(address_game[data.addr].guess(recv_data.decode()))
 
         else:
