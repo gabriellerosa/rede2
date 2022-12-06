@@ -121,8 +121,8 @@ def service_connection(key, mask):
 
             board = address_game[data.addr].show()
 
-            data.outb = str.encode(result)
-            data.outc = str.encode(board)
+            data.outb = str.encode(result + board)
+            #data.outc = str.encode(board)
 
         else:
             print(f"Closing connection to {data.addr}")
@@ -135,12 +135,12 @@ def service_connection(key, mask):
             sent = sock.send(data.outb)  # Should be ready to write
             data.outb = data.outb[sent:]
 
-            print(data.outc.decode())
-            sentc = sock.send(data.outc)  # Should be ready to write
+            # print(data.outc.decode())
+            # sentc = sock.send(data.outc)  # Should be ready to write
 
-            print('oi')
-            print(sentc)
-            data.outc = data.outb[sentc:]
+            # print('oi')
+            # print(sentc)
+            # data.outc = data.outb[sentc:]
 
 
 if len(sys.argv) != 3:
