@@ -18,7 +18,6 @@ address_game = dict()
 class Game:
     tabuleiro = []
     attempt = 0 # int: Qnt de tentativas que a pessoa fez
-    end_game = 0 # int: 1 = jogo acabou
     need_coloring = False # se a ultima tentativa foi boa TRUE senao FALSE
 
     # Recebe uma word que é a string que representa o palpite feito pelo client
@@ -37,7 +36,6 @@ class Game:
 
         # Se as palavras forem iguais, logo o jogo acaba pois a pessoa ganhou
         if(word == ignoring_accent):
-            end_game = 1
             return "1" # 'Voce ganhou'
         else:
             self.attempt+=1
