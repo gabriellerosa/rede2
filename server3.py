@@ -6,8 +6,10 @@ import selectors
 import types
 import random
 
+from termcolor import colored
+
 list_of_words = ["ética","plena","mútua","tênue","sutil","vigor","fazer","aquém","assim","porém","seção","audaz","sanar","cerne","fosse","inato","ideia","poder","moral","desde","justo","muito","torpe","honra"]
-day_word = random.randint(0, len(list_of_words))
+day_word = list_of_words[random.randint(0, len(list_of_words))]
 address_game = dict()
 
 class Game:
@@ -24,12 +26,36 @@ class Game:
             return "1" # 'Voce ganhou'
         else:
             self.attempt+=1
-            if(self.attempt >= 5):
+            if(self.attempt >= 6):
                 end_game = 1
                 return "2" # 'Tentou todas as palavras e perdeu'
             return "3"     # 'Palavra errada'
 
+    def colorir(self, palavra):
+        text = ""
+        freq = dict()
+
+        # Colocando as letras verdes
+        for i in range(len(palavra)):
+            if(palavra[i] != day_word[i]):
+                if not day_word[i] in freq:
+                    freq[day_word[i]] = 0
+                freq[day_word[i]] += 1
+
+        # Colocando as letras amarelas
+        for i in range(len(palavra)):
+            if(palavra[i] == day_word[i]):
+                text += colored(palavra[i], "green")
+            elif(palavra[i] in freq):
+                text += colored(palavra[i], "yellow")
+            else:
+                text += palavra[i]
+        return text
+
     def show(self):
+
+        # Colorir as palavras
+        self.tabuleiro[-1] = self.colorir(self.tabuleiro[-1])
 
         # Transformar o array de strings numa string unica
         board = ""
