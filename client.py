@@ -14,10 +14,10 @@ while True:
     print('Díga a palavra ai vá')
     word = input()
 
-# Enviar dados para o servidor, portanto, enviando a palavra
+    # Enviar dados para o servidor, portanto, enviando a palavra
     obj_socket.send(word.encode())
 
-# Receber os dados que vem do servidor ate tamanho X
+    # Receber os dados que vem do servidor ate tamanho X
     # resposta sobre a palavra que a gt enviou anteriormente
     response_word = obj_socket.recv(1)
 
@@ -35,12 +35,11 @@ while True:
     print(words_board)
     print('-------------------\n')
 
-
-    if(response_word.decode() == "1"):
+    if (response_word.decode() == "1"):
         print('Ganhou')
         obj_socket.close()
         break
-    elif(response_word.decode() == "2"):
+    elif (response_word.decode() == "2"):
         print('Perdeu')
         obj_socket.close()
         break

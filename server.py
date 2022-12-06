@@ -8,61 +8,66 @@ import random
 import unicodedata
 
 from termcolor import colored
+from database import list_of_words
 
-list_of_words = ["ética","plena","mútua","tênue","sutil","vigor","fazer","aquém","assim","porém","seção","audaz","sanar","cerne","fosse","inato","ideia","poder","moral","desde","justo","muito","torpe","honra"]
 day_word = list_of_words[random.randint(0, len(list_of_words))]
-
 address_game = dict()
 
 class Game:
     tabuleiro = []
-    attempt = 0 # int: Qnt de tentativas que a pessoa fez
-    end_game = 0 # int: 1 = jogo acabou
+    attempt = 0  # int: Qnt de tentativas que a pessoa fez
+    end_game = 0  # int: 1 = jogo acabou
 
-    def guess(self,word):
+    def guess(self, word):
 
         self.tabuleiro.append(word)
-        ignoring_accent = unicodedata.normalize('NFKD', day_word).encode('ASCII', 'ignore').decode()
+        ignoring_accent = unicodedata.normalize(
+            'NFKD', day_word).encode('ASCII', 'ignore').decode()
 
-        if(word == ignoring_accent):
+        if (word == ignoring_accent):
             end_game = 1
-            return "1" # 'Voce ganhou'
+            return "1"  # 'Voce ganhou'
         else:
-            self.attempt+=1
-            if(self.attempt >= 6):
+            self.attempt += 1
+            if (self.attempt >= 6):
                 end_game = 1
-                return "2" # 'Tentou todas as palavras e perdeu'
+                return "2"  # 'Tentou todas as palavras e perdeu'
             return "3"     # 'Palavra errada'
+        
 
-    def colorir(self, palavra):
+    def colorize(self, palavra):
+
         text = ""
         freq = dict()
 
         # Colocando as letras verdes
         for i in range(len(palavra)):
-            ignoring_accent = unicodedata.normalize('NFKD', day_word[i]).encode('ASCII', 'ignore').decode()
+            ignoring_accent = unicodedata.normalize(
+                'NFKD', day_word[i]).encode('ASCII', 'ignore').decode()
 
-            if(palavra[i] != ignoring_accent):
+            if (palavra[i] != ignoring_accent):
                 if not ignoring_accent in freq:
                     freq[ignoring_accent] = 0
                 freq[ignoring_accent] += 1
 
         # Colocando as letras amarelas
         for i in range(len(palavra)):
-            ignoring_accent = unicodedata.normalize('NFKD', day_word[i]).encode('ASCII', 'ignore').decode()
+            ignoring_accent = unicodedata.normalize(
+                'NFKD', day_word[i]).encode('ASCII', 'ignore').decode()
 
-            if(palavra[i] == ignoring_accent):
+            if (palavra[i] == ignoring_accent):
                 text += colored(day_word[i], "green")
-            elif(palavra[i] in freq):
+            elif (palavra[i] in freq):
                 text += colored(palavra[i], "yellow")
             else:
                 text += palavra[i]
+                
         return text
 
     def show(self):
 
-        # Colorir as palavras
-        self.tabuleiro[-1] = self.colorir(self.tabuleiro[-1])
+        # colorize as palavras
+        self.tabuleiro[-1] = self.colorize(self.tabuleiro[-1])
 
         # Transformar o array de strings numa string unica
         board = ""
@@ -71,6 +76,7 @@ class Game:
             board += "\n"
 
         return board
+
 
 sel = selectors.DefaultSelector()
 
@@ -87,6 +93,7 @@ def accept_wrapper(sock):
 
 
 def service_connection(key, mask):
+    
     sock = key.fileobj
     data = key.data
 
@@ -119,7 +126,6 @@ def service_connection(key, mask):
             data.outc = data.outb[sentc:]
 
 
-
 if len(sys.argv) != 3:
     print(f"Usage: {sys.argv[0]} <host> <port>")
     sys.exit(1)
@@ -140,6 +146,7 @@ try:
                 accept_wrapper(key.fileobj)
             else:
                 service_connection(key, mask)
+                
 except KeyboardInterrupt:
     print("Caught keyboard interrupt, exiting")
 finally:
