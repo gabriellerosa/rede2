@@ -5,11 +5,13 @@ import socket
 import selectors
 import types
 import random
+import unicodedata
 
 from termcolor import colored
 
 list_of_words = ["ética","plena","mútua","tênue","sutil","vigor","fazer","aquém","assim","porém","seção","audaz","sanar","cerne","fosse","inato","ideia","poder","moral","desde","justo","muito","torpe","honra"]
 day_word = list_of_words[random.randint(0, len(list_of_words))]
+
 address_game = dict()
 
 class Game:
@@ -20,8 +22,9 @@ class Game:
     def guess(self,word):
 
         self.tabuleiro.append(word)
+        ignoring_accent = unicodedata.normalize('NFKD', day_word).encode('ASCII', 'ignore').decode()
 
-        if(word == day_word):
+        if(word == ignoring_accent):
             end_game = 1
             return "1" # 'Voce ganhou'
         else:
@@ -37,15 +40,19 @@ class Game:
 
         # Colocando as letras verdes
         for i in range(len(palavra)):
-            if(palavra[i] != day_word[i]):
-                if not day_word[i] in freq:
-                    freq[day_word[i]] = 0
-                freq[day_word[i]] += 1
+            ignoring_accent = unicodedata.normalize('NFKD', day_word[i]).encode('ASCII', 'ignore').decode()
+
+            if(palavra[i] != ignoring_accent):
+                if not ignoring_accent in freq:
+                    freq[ignoring_accent] = 0
+                freq[ignoring_accent] += 1
 
         # Colocando as letras amarelas
         for i in range(len(palavra)):
-            if(palavra[i] == day_word[i]):
-                text += colored(palavra[i], "green")
+            ignoring_accent = unicodedata.normalize('NFKD', day_word[i]).encode('ASCII', 'ignore').decode()
+
+            if(palavra[i] == ignoring_accent):
+                text += colored(day_word[i], "green")
             elif(palavra[i] in freq):
                 text += colored(palavra[i], "yellow")
             else:

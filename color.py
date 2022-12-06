@@ -1,8 +1,11 @@
 import sys
-from unidecode import unidecode
+import unicodedata
 
 clean_text = unicodedata.normalize('NFKD', u'séquoia').encode('ASCII', 'ignore')
-print(clean_text in 'Mon sequoia est vert')
+
+print(clean_text)
+if clean_text.decode() in 'Mon sequoia est vert':
+    print('yes')
 # from termcolor import colored, cprint
 
 # text = colored("Hello, World!", "red", attrs=["reverse", "blink"])

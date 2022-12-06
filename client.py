@@ -38,6 +38,8 @@ while True:
 
     if(response_word.decode() == "1"):
         print('Ganhou')
+        obj_socket.close()
+        break
     elif(response_word.decode() == "2"):
         print('Perdeu')
         obj_socket.close()
