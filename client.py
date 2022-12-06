@@ -45,4 +45,4 @@ while True:
         obj_socket.close()
         break
     else:
-        print('Palavra errada')
+        print('Palavra Invalida')
