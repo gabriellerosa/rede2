@@ -18,13 +18,27 @@ while True:
     obj_socket.send(word.encode())
 
 # Receber os dados que vem do servidor ate tamanho X
-    data = obj_socket.recv(1024)
+    # resposta sobre a palavra que a gt enviou anteriormente
+    response_word = obj_socket.recv(1)
 
     print('Menssagem ecoada:')
+    print(response_word.decode())
 
-    if(data.decode() == '1'):
+    # resposta sobre como o tabuleiro ficou e precisa decodar pois ele veio encodado
+    board = obj_socket.recv(1024)
+
+    # splitar pois estava em formato de string
+    words_board = board.decode()
+
+    # printa o tabuleiro atual
+    print('-------------------\n')
+    print(words_board)
+    print('-------------------\n')
+
+
+    if(response_word.decode() == "1"):
         print('Ganhou')
-    elif(data.decode() == '2'):
+    elif(response_word.decode() == "2"):
         print('Perdeu')
         obj_socket.close()
         break

@@ -16,6 +16,9 @@ class Game:
     end_game = 0 # int: 1 = jogo acabou
 
     def guess(self,word):
+
+        self.tabuleiro.append(word)
+
         if(word == day_word):
             end_game = 1
             return "1" # 'Voce ganhou'
@@ -25,6 +28,16 @@ class Game:
                 end_game = 1
                 return "2" # 'Tentou todas as palavras e perdeu'
             return "3"     # 'Palavra errada'
+
+    def show(self):
+
+        # Transformar o array de strings numa string unica
+        board = ""
+        for i in self.tabuleiro:
+            board += i
+            board += "\n"
+
+        return board
 
 sel = selectors.DefaultSelector()
 
@@ -49,7 +62,10 @@ def service_connection(key, mask):
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
 
-            data.outb += str.encode(address_game[data.addr].guess(recv_data.decode()))
+            result = address_game[data.addr].guess(recv_data.decode())
+            board = address_game[data.addr].show()
+            data.outb = str.encode(result)
+            data.outc = str.encode(board)
 
         else:
             print(f"Closing connection to {data.addr}")
@@ -61,6 +77,14 @@ def service_connection(key, mask):
             print(f"Echoing {data.outb!r} to {data.addr}")
             sent = sock.send(data.outb)  # Should be ready to write
             data.outb = data.outb[sent:]
+
+            print(data.outc.decode())
+            sentc = sock.send(data.outc)  # Should be ready to write
+
+            print('oi')
+            print(sentc)
+            data.outc = data.outb[sentc:]
+
 
 
 if len(sys.argv) != 3:
@@ -87,3 +111,4 @@ except KeyboardInterrupt:
     print("Caught keyboard interrupt, exiting")
 finally:
     sel.close()
+    lsock.close()
