@@ -31,7 +31,7 @@ Os processos do servidor e cliente devem ser executados em abas distintas do ter
 
 Servidor:
 ```
-python3 server.py
+python3 server.py localhost 50000
 ``` 
 
 Cliente:
