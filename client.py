@@ -1,5 +1,6 @@
 import socket
 import os
+import pickle
 
 HOST = '127.0.0.1'
 PORT = 50000
@@ -24,8 +25,8 @@ if __name__ == "__main__":
     
     while True:
         
-        print('Díga a palavra ai vá')
-        word = input()
+        word = input('Díga a palavra ai vá\n')
+        word = word.upper()
 
         # Enviar dados para o servidor, portanto, enviando a palavra
         socket.send(word.encode())
