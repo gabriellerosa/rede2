@@ -1,18 +1,16 @@
 
 import socket
 import os
+from config import *
 
-HOST = '127.0.0.1'
-PORT = 50000
+# Criar um socket TCP/IP
+socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-obj_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Pedir para conectar lá no servidor
-obj_socket.connect((HOST, PORT))
-
-
+# Conectar o socket no host e porta especificados
+socket.connect((HOST, PORT))
 
 def clearConsole():
+    
     command = 'clear'
     # verificando qual o tipo de sistema operacional
     if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
@@ -23,11 +21,15 @@ def clearConsole():
 
 while True:
 
-    print('Díga a palavra ai vá')
-    word = input()
+    word = input('Diga a palavra aí, vá:\n')
+    
+    word = word.strip().replace(' ', '').upper()
+    
+    if not word:
+        continue
 
     # Enviar dados para o servidor, portanto, enviando a palavra
-    obj_socket.send(word.encode())
+    socket.send(word.encode())
 
     # Receber os dados que vem do servidor ate tamanho X
     # resposta sobre a palavra que a gt enviou anteriormente
@@ -36,7 +38,7 @@ while True:
 
     # portanto o tabuleiro todo preenchido = 6 * 6 + 1 = 37
     # resposta sobre como o tabuleiro ficou e precisa decodar pois ele veio encodado
-    response = obj_socket.recv(1024).decode()
+    response = socket.recv(BUFF_SIZE).decode()
 
     print('Menssagem ecoada:')
 
@@ -53,13 +55,16 @@ while True:
 
     if (option == "1"):
         print('Ganhou')
-        obj_socket.close()
+        socket.close()
         break
     elif (option == "2"):
         print('Perdeu')
-        obj_socket.close()
+        socket.close()
         break
     elif (option == "3"):
         print('Palavra Errada')
-    else:
+    elif (option == "4"):
         print('Palavra Invalida')
+    else:
+        print('Número de tentativas esgotado')
+        socket.close()
