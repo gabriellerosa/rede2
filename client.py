@@ -1,15 +1,16 @@
+
 import socket
 import os
 
 HOST = '127.0.0.1'
 PORT = 50000
-BUFF_SIZE = 1024
 
-# Criar um socket TCP/IP
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+obj_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Conectar o socket no host e porta especificados
-socket.connect((HOST, PORT))
+# Pedir para conectar lá no servidor
+obj_socket.connect((HOST, PORT))
+
+
 
 def clearConsole():
     command = 'clear'
@@ -20,50 +21,45 @@ def clearConsole():
     # isso é como se a gt estivesse escrevendo no terminal, mas a maquina que escreve que maneiro =D
     os.system(command)
 
-if __name__ == "__main__":
-    
-    while True:
-        
-        print('Díga a palavra ai vá')
-        word = input()
+while True:
 
-        # Enviar dados para o servidor, portanto, enviando a palavra
-        socket.send(word.encode())
+    print('Díga a palavra ai vá')
+    word = input()
 
-        # Receber os dados que vem do servidor ate tamanho X
-        # resposta sobre a palavra que a gt enviou anteriormente
-        response_word = socket.recv(BUFF_SIZE)
+    # Enviar dados para o servidor, portanto, enviando a palavra
+    obj_socket.send(word.encode())
 
-        print('Menssagem ecoada:')
-        print(response_word.decode())
+    # Receber os dados que vem do servidor ate tamanho X
+    # resposta sobre a palavra que a gt enviou anteriormente
+    # 1 = caracter inicial na resposta
+    # 6 = tamanho maximo da palvra de retorno 5 + 1 que é o \n
 
-        # resposta sobre como o tabuleiro ficou e precisa decodar pois ele veio encodado
-        board = socket.recv(BUFF_SIZE)
+    # portanto o tabuleiro todo preenchido = 6 * 6 + 1 = 37
+    # resposta sobre como o tabuleiro ficou e precisa decodar pois ele veio encodado
+    response = obj_socket.recv(1024).decode()
 
-        # splitar pois estava em formato de string
-        words_board = board.decode()
+    print('Menssagem ecoada:')
 
-        # limpar console
-        clearConsole()
+    words_board = response[1:]
+    option = response[0]
 
-        # printa o tabuleiro atual
-        print('-------------------\n')
-        print(words_board)
-        print('-------------------\n')
-        
-        decoded_word = response_word.decode()
-        
-        if(decoded_word == "3"):
-            print("Palavra errada")
-        elif (decoded_word == "4"):
-            print('A palavra deve conter 5 letras')
-        else:
-            if(decoded_word == "1"):
-                print('Ganhou')
-            elif (decoded_word == "2"):
-                print('Perdeu')
-            elif (decoded_word == "5"):
-                print('Acabaram as tentativas')
-            
-            socket.close()
-            break
+    # limpar console
+    clearConsole()
+
+    # printa o tabuleiro atual
+    print('-------------------\n')
+    print(words_board)
+    print('-------------------\n')
+
+    if (option == "1"):
+        print('Ganhou')
+        obj_socket.close()
+        break
+    elif (option == "2"):
+        print('Perdeu')
+        obj_socket.close()
+        break
+    elif (option == "3"):
+        print('Palavra Errada')
+    else:
+        print('Palavra Invalida')
