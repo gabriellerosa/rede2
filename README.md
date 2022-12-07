@@ -5,7 +5,7 @@ Nesta implementação, o servidor escolhe uma palavra secreta aleatória de cinc
 
 ## 🚀 Executando o projeto
 
-Para a execução do projeto, é necessário ter o Python instalado em sua máquina e pip, seu gerenciador de pacotes. Para isso, acesse o site oficial do Python e siga as instruções de instalação para o seu sistema operacional: https://www.python.org/downloads/.
+Para a execução do projeto, é necessário ter o Python instalado em sua máquina. Para isso, acesse o site oficial do Python e siga as instruções de instalação para o seu sistema operacional: https://www.python.org/downloads/.
 
 
 #### Na pasta raiz do projeto, inicialize o ambiente virtual do Python
@@ -42,14 +42,6 @@ python3 client.py
 
 ## Discentes
 <ul>
-  <li>
-    <a href="https://github.com/gabriellerosa" target="_blank">
-      Gabrielle Rosa
-    </a>
-  </li>
-  <li>
-    <a href="https://github.com/danieljcksn" target="_blank">
-      Daniel Jackson
-    </a>
-  </li>
+  <li>Gabrielle Rosa</li>
+  <li>Daniel Jackson</li>
 </ul>
