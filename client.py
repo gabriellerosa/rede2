@@ -13,6 +13,7 @@ socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socket.connect((HOST, PORT))
 
 def clearConsole():
+    
     command = 'clear'
     # verificando qual o tipo de sistema operacional
     if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
@@ -26,7 +27,7 @@ if __name__ == "__main__":
     while True:
         
         word = input('Díga a palavra ai vá\n')
-        word = word.upper()
+        word = word.strip().upper()
 
         # Enviar dados para o servidor, portanto, enviando a palavra
         socket.send(word.encode())

@@ -19,6 +19,8 @@ socket.bind((HOST, PORT))
 # Atende as conexões recebidas
 socket.listen(1)
 
+print('Servidor rodando em', socket.getsockname())
+
 # Chamadas de socket não mais serão bloqueantes
 socket.setblocking(False)
 
@@ -31,7 +33,8 @@ selector.register(socket, selectors.EVENT_READ, data=None)
 list_of_words = open('./database/easy.txt', 'r', encoding='utf-8').readlines()
 
 # Palavra secreta do dia
-day_word = list_of_words[random.randint(0, len(list_of_words))].upper()
+day_word = list_of_words[random.randint(0, len(list_of_words))]
+day_word = day_word.strip().upper()
 
 # Dicionario que vai guardar o endereço do cliente e o objeto game
 address_game = dict()
