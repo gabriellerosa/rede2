@@ -3,7 +3,7 @@ Trata-se da implementação do Wordle, um jogo de advinhação de palavras, util
 
 Nesta implementação, o servidor escolhe uma palavra secreta aleatória de cinco letras da língua portuguesa, enquanto o cliente deve tentar adivinhá-la, restrito a 6 tentativas. 
 
-A lista de palavras utilizadas foram retiradas do repositório de palavras do projeto [Dicionário br.ispell](https://www.ime.usp.br/~pf/dicios/).
+A lista de palavras utilizadas foi obtida no repositório de palavras do projeto [Dicionário br.ispell](https://www.ime.usp.br/~pf/dicios/).
 
 ## 🚀 Executando o projeto
 
