@@ -32,11 +32,12 @@ while True:
     
     # Carrega o dicionario usando pickle.loads()
     received_message = pickle.loads(received_message)
+    msg_type = received_message['type']
     
     # print(received_message)
     
     # Escolha de nickname
-    if(received_message['type'] == 'nickname_selection'):
+    if(msg_type == 'nickname_selection'):
         wordle = 'Wordle'
         colored_wordle = ""
         colors = ['green', 'yellow', 'white']
@@ -59,7 +60,7 @@ while True:
         socket.send(message)
        
     # Seleção de dificuldade 
-    elif(received_message['type'] == 'difficulty_selection'):
+    elif(msg_type == 'difficulty_selection'):
         questions = [
         inquirer.List('difficulty',
                         message=received_message['content'],
@@ -80,9 +81,7 @@ while True:
         
         socket.send(message)
         
-    elif(
-        received_message['type'] == 'guess'
-    ):
+    elif(msg_type == 'guess'):
         print(received_message['board'])
         print(received_message['content'])
         
@@ -99,9 +98,7 @@ while True:
         
         socket.send(message)
     
-    elif(
-        received_message['type'] == 'guess_result'
-    ):
+    elif(msg_type == 'guess_result'):
         if(received_message['content']['game_over']):
             print(received_message['content']['message'])
             
@@ -131,7 +128,7 @@ while True:
             socket.send(message)
                     
     elif(
-        received_message['type'] == 'update'
+        msg_type == 'update'
     ):
         print(received_message['content'])
     else:
