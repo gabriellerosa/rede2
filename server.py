@@ -32,7 +32,6 @@ try:
             time.sleep(0.2)
             
     
-    console.log('[bold green]Servidor iniciado com sucesso! :white_check_mark:')
     # Conecta o socket no host e porta especificados
     socket.bind((HOST, PORT))
 
@@ -48,6 +47,7 @@ try:
 
     # Registra o socket para receber eventos de leitura
     selector.register(socket, selectors.EVENT_READ, data=None)
+    console.log('[bold green]Servidor iniciado com sucesso! :white_check_mark:')
     
 except OSError:
     console.log('O servidor já está sendo executado no host e porta especificados. :x:', style='bold red')
@@ -58,8 +58,8 @@ hard_words = open('./database/hard.txt', 'r', encoding='utf-8').readlines()
 medium_words = open('./database/medium.txt', 'r', encoding='utf-8').readlines()
 
 # Palavra secreta do dia
-hard_day_word = hard_words[random.randint(0, len(hard_words))]
-medium_day_word = medium_words[random.randint(0, len(medium_words))]
+hard_day_word = hard_words[random.randint(0, len(hard_words))].strip()
+medium_day_word = medium_words[random.randint(0, len(medium_words))].strip()
 
 # Dicionario que vai guardar o endereço do cliente e o objeto game
 address_game = dict()
@@ -135,11 +135,14 @@ def service_connection(key, mask):
                 
                 console.log(text)
                 
+                console.log(client_game.secret_word)
+                
                 
                 message = pickle.dumps({
+                    'secret_word': client_game.secret_word,
                     'type': 'guess',
                     'content': 'Adivinhe a palavra',
-                    'board': client_game.show()
+                    'board': client_game.show(),
                 })
                 
                 socket.send(message)
@@ -168,7 +171,8 @@ def service_connection(key, mask):
                 message = pickle.dumps({
                     'type': 'guess_result',
                     'content': result,
-                    'board': board
+                    'board': board,
+                    'secret_word': client_game.secret_word,
                 })
                 
                 socket.send(message)

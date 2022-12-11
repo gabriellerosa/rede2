@@ -7,12 +7,14 @@ import inquirer
 from rich.console import Console
 from rich.text import Text
 from rich.emoji import Emoji
+import rich.spinner as spinner
+from rich import box
+from rich.table import Table
 
 from config import *
 from termcolor import colored
 
 import time
-import rich.spinner as spinner
 
 console = Console()
 
@@ -29,14 +31,44 @@ try:
             time.sleep(0.1)
             
     
+    socket.connect((HOST, PORT))
     console.log('[bold green]Conexão com o servidor estabelecida! :white_check_mark:')
     time.sleep(1)
-    
-    socket.connect((HOST, PORT))
     
 except ConnectionRefusedError:
     console.log('O servidor não está rodando!', style='bold red')
     exit()
+    
+    
+def show_table(board, secret_word):
+    table = Table(show_header=False, title="WORDLE", box=box.SQUARE, show_lines=True, header_style="bold magenta")
+    
+    for tried_word in board:
+        validated_word = list()
+        
+        for i in range(len(tried_word)):
+            if(tried_word[i] == secret_word[i]):
+                validated_word.append({
+                    'letter': tried_word[i], 
+                    'color': 'green'})
+            elif tried_word[i] in secret_word:
+                validated_word.append({
+                    'letter': tried_word[i], 
+                    'color': 'yellow'})
+            else:
+                validated_word.append({
+                    'letter': tried_word[i], 
+                    'color': 'white'})
+                
+            
+        table.add_row(
+            *[Text(letter['letter'], style='bold ' + letter['color']) for letter in validated_word], 
+        )
+        
+    for i in range(len(board), 6):
+        table.add_row(*[f" " for letter in secret_word])
+        
+    console.print(table)
 
 
 def clearConsole():
@@ -71,7 +103,6 @@ while True:
             colored_wordle += colored(wordle[i], colors[i % len(colors)])
             
         print('Bem vindo ao ' + colored_wordle + '!\n')
-        
         print('Escolha um nickname para começar a jogar!\n')
         
         nickname = input('Nickname: ')
@@ -97,8 +128,6 @@ while True:
         
         print('Você escolheu a dificuldade ' + colored(selected_difficulty, "green" if selected_difficulty == 'Normal' else 'red') + '!\n')
         
-        # Send the difficulty to the server
-        
         message = pickle.dumps({
             'type': 'difficulty_selection',
             'content': selected_difficulty
@@ -107,13 +136,13 @@ while True:
         socket.send(message)
         
     elif(msg_type == 'guess'):
-        print(received_message['board'])
-        print(received_message['content'])
+        console.log(received_message)
+        show_table(received_message['board'], received_message['secret_word'])
         
         if received_message['content'] == 'Você acertou!':
             break
         
-        guess = input()
+        guess = input().strip().replace(' ', '').upper()
         
         # Send the difficulty to the server
         message = pickle.dumps({
@@ -124,6 +153,9 @@ while True:
         socket.send(message)
     
     elif(msg_type == 'guess_result'):
+        
+        show_table(received_message['board'], received_message['secret_word'])
+        
         if(received_message['content']['game_over']):
             print(received_message['content']['message'])
             
@@ -137,13 +169,9 @@ while True:
             
             socket.send(message)
             
-            
             break
         else:
-            print(received_message['content']['message'])
-            print(received_message['board'])
-            
-            guess = input('Digite a palavra: ')
+            guess = input('Digite a palavra: ').strip().replace(' ', '').upper()
         
             message = pickle.dumps({
                 'type': 'guess',
