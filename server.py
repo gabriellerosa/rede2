@@ -7,10 +7,12 @@ import types
 import random
 import pickle
 import inquirer
+import time
 
 from rich.console import Console
 from rich.text import Text
 from rich.emoji import Emoji
+import rich.spinner as spinner
 
 
 from game import Game
@@ -21,21 +23,38 @@ console = Console()
 # Criar um socket TCP/IP
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Conecta o socket no host e porta especificados
-socket.bind((HOST, PORT))
+try:
+    # Beautiful loading using righ.spinner
+    with console.status('[bold green]Iniciando o servidor...') as status:
+        spinner = spinner.Spinner('line')
+        
+        # spinner = spinner.Spinner('[:spinner:] Iniciando o servidor...')
+        for _ in range(10):
+            spinner.update()
+            time.sleep(0.2)
+            
+        status.update('[bold green]Servidor iniciado com sucesso! :white_check_mark:')
+    
+    
+    # Conecta o socket no host e porta especificados
+    socket.bind((HOST, PORT))
 
-# Atende as conexões recebidas
-socket.listen(1)
+    # Atende as conexões recebidas
+    socket.listen(1)
 
-print('Servidor rodando em', socket.getsockname())
+    console.log(':running: Servidor rodando em ' + str(socket.getsockname()), style='bold')
 
-# Chamadas de socket não mais serão bloqueantes
-socket.setblocking(False)
+    # Chamadas de socket não mais serão bloqueantes
+    socket.setblocking(False)
 
-selector = selectors.DefaultSelector()
+    selector = selectors.DefaultSelector()
 
-# Registra o socket para receber eventos de leitura
-selector.register(socket, selectors.EVENT_READ, data=None)
+    # Registra o socket para receber eventos de leitura
+    selector.register(socket, selectors.EVENT_READ, data=None)
+    
+except OSError:
+    console.log('O servidor já está sendo executado no host e porta especificados. :x:', style='bold red')
+    exit()
 
 # To do: Permitir que o cliente escolha o nível de dificuldade
 hard_words = open('./database/hard.txt', 'r', encoding='utf-8').readlines()
@@ -72,7 +91,6 @@ def accept_wrapper(sock):
     })
     
     conn.send(new_game_message)
-    
     
 
 def service_connection(key, mask):

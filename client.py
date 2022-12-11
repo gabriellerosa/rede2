@@ -4,19 +4,31 @@ import os
 import pickle
 import inquirer
 
+from rich.console import Console
+from rich.text import Text
+from rich.emoji import Emoji
+
 from config import *
 from termcolor import colored
 
-# Criar um socket TCP/IP
+console = Console()
+
+# Cria um socket TCP/IP
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Conectar o socket no host e porta especificados
-socket.connect((HOST, PORT))
+# Conecta o socket no host e porta especificados
+try: 
+    socket.connect((HOST, PORT))
+except ConnectionRefusedError:
+    console.log('O servidor não está rodando!', style='bold red')
+    exit()
+
 
 def clearConsole():
     
     command = 'clear'
     # verificando qual o tipo de sistema operacional
+    
     if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
         command = 'cls'
 
@@ -24,7 +36,7 @@ def clearConsole():
     os.system(command)
 
 while True:
-    # Limpar console
+    # Limpa o console
     clearConsole()
     
     # Mensagem recebida do servidor
@@ -33,8 +45,6 @@ while True:
     # Carrega o dicionario usando pickle.loads()
     received_message = pickle.loads(received_message)
     msg_type = received_message['type']
-    
-    # print(received_message)
     
     # Escolha de nickname
     if(msg_type == 'nickname_selection'):
