@@ -1,2 +1,3 @@
 termcolor
 inquirer
+rich

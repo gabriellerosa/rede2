@@ -8,9 +8,15 @@ import random
 import pickle
 import inquirer
 
+from rich.console import Console
+from rich.text import Text
+from rich.emoji import Emoji
+
 
 from game import Game
 from config import *
+
+console = Console()
 
 # Criar um socket TCP/IP
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -77,18 +83,21 @@ def service_connection(key, mask):
     # int: o que vamos retornar para o cliente
     if mask & selectors.EVENT_READ:
         received_message = socket.recv(BUFF_SIZE)  # Should be ready to read
-        
-        print('Received from', data.addr)
-        print(pickle.loads(received_message))
+        client_addr = data.addr
+        client_game = address_game[client_addr]
         
         if received_message:
             received_message = pickle.loads(received_message)
             
-            client_addr = data.addr
-            client_game = address_game[client_addr]
-            
             if(received_message['type'] == 'nickname_selection'):
                 client_game.set_nickname(received_message['content'])
+                
+                text = Text("Novo usuário: ")
+                text.append(Text.assemble(received_message['content'], style="bold blue"))
+                text.append(" | Endereço: " + str(client_addr))
+                
+                console.log(text)
+                
                 
                 message = pickle.dumps({
                     'type': 'difficulty_selection',
@@ -103,6 +112,13 @@ def service_connection(key, mask):
                 client_game.set_difficulty(received_message['content'])
                 client_game.set_secret_word(hard_day_word, medium_day_word)
                 
+                text = Text()
+                text.append(Text.assemble(client_game.nickname, style="bold blue"))
+                text.append(" selecionou o nível " + received_message['content'])
+                
+                console.log(text)
+                
+                
                 message = pickle.dumps({
                     'type': 'guess',
                     'content': 'Adivinhe a palavra',
@@ -114,6 +130,12 @@ def service_connection(key, mask):
             elif (received_message['type'] == 'guess'):
                 result = client_game.guess(received_message['content'])
                 board = client_game.show()
+                
+                text = Text("Tentativa de ")
+                text.append(Text.assemble(client_game.nickname, style="bold blue"))
+                text.append(": " + received_message['content'])
+                
+                console.log(text)
                 
                 # if result == 'Você acertou!':
                 #     # Envia mensagem para todos os clientes
@@ -135,6 +157,12 @@ def service_connection(key, mask):
                 socket.send(message)
 
             elif (received_message['type'] == 'game_over'):
+                text = Text(client_game.nickname)
+                text.stylize("bold blue")
+                text.append(" saiu do jogo.")
+                
+                console.log(text)
+                
                 # Remove o cliente da lista de clientes conectados
                 connected_clients.pop(client_addr)
                 
@@ -142,7 +170,12 @@ def service_connection(key, mask):
                 selector.unregister(socket)
                 
         else:
-            print(f"Closing connection to {data.addr}")
+            text = Text(client_game.nickname)
+            text.stylize("bold blue")
+            text.append(" saiu do jogo.")
+            
+            console.log(text)
+            
             selector.unregister(socket)
             socket.close()
 
