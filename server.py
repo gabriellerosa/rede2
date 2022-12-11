@@ -24,25 +24,22 @@ console = Console()
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
-    # Beautiful loading using righ.spinner
     with console.status('[bold green]Iniciando o servidor...') as status:
         spinner = spinner.Spinner('line')
         
-        # spinner = spinner.Spinner('[:spinner:] Iniciando o servidor...')
         for _ in range(10):
             spinner.update()
             time.sleep(0.2)
             
-        status.update('[bold green]Servidor iniciado com sucesso! :white_check_mark:')
     
-    
+    console.log('[bold green]Servidor iniciado com sucesso! :white_check_mark:')
     # Conecta o socket no host e porta especificados
     socket.bind((HOST, PORT))
 
     # Atende as conexões recebidas
     socket.listen(1)
 
-    console.log(':running: Servidor rodando em ' + str(socket.getsockname()), style='bold')
+    console.log(':running: Ouvindo conexões em ' + str(socket.getsockname()), style='bold')
 
     # Chamadas de socket não mais serão bloqueantes
     socket.setblocking(False)
@@ -72,7 +69,9 @@ def accept_wrapper(sock):
     
     conn, addr = sock.accept()  # Should be ready to read
     
-    print(f"Accepted connection from {addr}")
+    console.log(
+        f'[bold green]Conexão aceita de {addr[0]}:{addr[1]}', 
+    )
     
     conn.setblocking(False)
     data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")

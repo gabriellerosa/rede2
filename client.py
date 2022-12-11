@@ -11,6 +11,9 @@ from rich.emoji import Emoji
 from config import *
 from termcolor import colored
 
+import time
+import rich.spinner as spinner
+
 console = Console()
 
 # Cria um socket TCP/IP
@@ -18,7 +21,19 @@ socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Conecta o socket no host e porta especificados
 try: 
+    with console.status('[bold green]Conectando-se ao servidor...') as status:
+        spinner = spinner.Spinner('line')
+    
+        for _ in range(10):
+            spinner.update()
+            time.sleep(0.1)
+            
+    
+    console.log('[bold green]Conexão com o servidor estabelecida! :white_check_mark:')
+    time.sleep(1)
+    
     socket.connect((HOST, PORT))
+    
 except ConnectionRefusedError:
     console.log('O servidor não está rodando!', style='bold red')
     exit()
