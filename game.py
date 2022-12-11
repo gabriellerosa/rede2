@@ -1,26 +1,39 @@
 import unicodedata
 from termcolor import colored
 
+dictionary = open('./database/hard.txt', 'r', encoding='utf-8').readlines()
+dictionary = [word.strip().upper() for word in dictionary]
+
+
+
 class Game:
 
     def __init__(self):
         
         self.attempts = 0 # int: Qnt de tentativas que a pessoa fez
-        self.game_difficulty = 'easy'
         self.game_over = False
         self.need_coloring = False # Se a última tentativa foi boa TRUE senao FALSE
         self.secret_word = ""
         self.tabuleiro = []
+        self.difficulty = ""
+        self.nickname = ""
 
     # Recebe uma word que é a string que representa o palpite feito pelo client
     def guess(self, word):
-        
         if(self.game_over):
-            return "5" # 'O jogo já acabou'
+            return {
+                'game_over': True,
+                'message': 'O jogo já acabou',
+            }
         
-        # só devemos adicionar a palavra se ela for de fato uma palavra de tamanho 5
-        if(len(word) != 5):
-            return "4" # Palavra nao permitida
+        validation = self.validate_word(word)
+        
+        if(not validation['ok']):
+            return {
+                'game_over': False,
+                'message': validation['message']
+            }
+        
             
         # Palavra válida, então será necessário colorí-la
         self.need_coloring = True
@@ -33,16 +46,26 @@ class Game:
 		# Se as palavras forem iguais, logo o jogo acaba pois a pessoa ganhou
         if (word == word_without_accent):
             self.game_over = True
-            return "1"  # 'Você ganhou'
+            return {
+                'game_over': True,
+                'winner': True,
+                'message': 'Parabéns! Você ganhou!'
+            }
         else:
             self.attempts += 1
             
             if (self.attempts >= 6):
-                self.game_over = True
-                return "2"  # 'Tentou todas as palavras e perdeu'
-            
-            return "3"  # 'Tentou uma palavra mas ela está errada'
-        
+                return {
+                    'game_over': True,
+                    'winner': False,
+                    'message': 'Que pena! Suas tentativas se esgotaram',
+                    'secret_word': self.secret_word
+                }
+         
+            return {
+                    'game_over': False,
+                    'message': 'Tente novamente!'
+                }
 
     def colorize(self, word):
         
@@ -85,12 +108,53 @@ class Game:
 
         return board
     
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty
+        
+    def set_secret_word(self, normal_word, hard_word):
+        self.secret_word = normal_word if self.difficulty == 'Normal' else hard_word
+    
     # A palavra a ser comparada depende do nivel de dificuldade.
     # Se for difícil, os acentos são considerados.
     def get_word_to_be_compared(self):
         
-        if(self.game_difficulty == 'hard'):
+        if(self.difficulty == 'hard'):
             return self.secret_word
         
         return unicodedata.normalize(
         'NFKD', self.secret_word).encode('ASCII', 'ignore').decode()
+        
+    def validate_word(self, word):
+        # Se a palavra não for de tamanho 5, não é válida
+        if(len(word) != 5):
+            return {
+                'ok': False,
+                'message': 'A palavra deve conter 5 letras'
+            }
+
+        # Se a palavra não for composta apenas por letras, não é válida
+        if(not word.isalpha()):
+            return {
+                'ok': False,
+                'message': 'A palavra deve conter apenas letras'
+            }
+        
+        # Se a palavra não for encontrada no dicionário, não é válida
+        if(word.upper() not in dictionary):
+            return {
+                'ok': False,
+                'message': 'A palavra não está no dicionário'
+            }
+        
+        return {
+            'ok': True
+        }
+
+    def set_nickname(self, nickname):
+        self.nickname = nickname
+
+
+        
+        
+        
+        
