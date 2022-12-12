@@ -1,19 +1,14 @@
-#!/usr/bin/env python3
-
-import sys
 import socket
 import selectors
 import types
 import random
 import pickle
-import inquirer
 import time
 
 from rich.console import Console
 from rich.text import Text
 from rich.emoji import Emoji
 import rich.spinner as spinner
-
 
 from game import Game
 from config import *
@@ -38,7 +33,8 @@ try:
     # Atende as conexões recebidas
     socket.listen(1)
 
-    console.log(':running: Ouvindo conexões em ' + str(socket.getsockname()), style='bold')
+    console.log(':running: Ouvindo conexões em ' + 
+                str(socket.getsockname()), style='bold')
 
     # Chamadas de socket não mais serão bloqueantes
     socket.setblocking(False)
@@ -47,10 +43,12 @@ try:
 
     # Registra o socket para receber eventos de leitura
     selector.register(socket, selectors.EVENT_READ, data=None)
+    
     console.log('[bold green]Servidor iniciado com sucesso! :white_check_mark:')
     
 except OSError:
-    console.log('O servidor já está sendo executado no host e porta especificados. :x:', style='bold red')
+    console.log('O servidor já está sendo executado no host e porta especificados. :x:', 
+                style='bold red')
     exit()
 
 # To do: Permitir que o cliente escolha o nível de dificuldade
@@ -61,19 +59,15 @@ medium_words = open('./database/medium.txt', 'r', encoding='utf-8').readlines()
 hard_day_word = hard_words[random.randint(0, len(hard_words))].strip()
 medium_day_word = medium_words[random.randint(0, len(medium_words))].strip()
 
-# Dicionario que vai guardar o endereço do cliente e o objeto game
+# Dicionarios que armazenarão o endereço do cliente seu respectivo jogo
 address_game = dict()
 connected_clients = dict()
 
 def accept_wrapper(sock):
     
-    conn, addr = sock.accept()  # Should be ready to read
-    
-    console.log(
-        f'[bold green]Conexão aceita de {addr[0]}:{addr[1]}', 
-    )
-    
+    conn, addr = sock.accept() 
     conn.setblocking(False)
+    
     data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
     selector.register(conn, events, data=data)
@@ -91,6 +85,8 @@ def accept_wrapper(sock):
     
     conn.send(new_game_message)
     
+    console.log(f'[bold green]Conexão aceita de {addr[0]}:{addr[1]}')
+    
 
 def service_connection(key, mask):
 
@@ -99,7 +95,8 @@ def service_connection(key, mask):
     
     # int: o que vamos retornar para o cliente
     if mask & selectors.EVENT_READ:
-        received_message = socket.recv(BUFF_SIZE)  # Should be ready to read
+        received_message = socket.recv(BUFF_SIZE)
+        
         client_addr = data.addr
         client_game = address_game[client_addr]
         
@@ -110,11 +107,11 @@ def service_connection(key, mask):
                 client_game.set_nickname(received_message['content'])
                 
                 text = Text("Novo usuário: ")
-                text.append(Text.assemble(received_message['content'], style="bold blue"))
+                text.append(Text.assemble(received_message['content'], 
+                                          style="bold blue"))
                 text.append(" | Endereço: " + str(client_addr))
                 
                 console.log(text)
-                
                 
                 message = pickle.dumps({
                     'type': 'difficulty_selection',
@@ -123,7 +120,6 @@ def service_connection(key, mask):
                 })
                 
                 socket.send(message)
-                
             
             elif(received_message['type'] == 'difficulty_selection'):
                 client_game.set_difficulty(received_message['content'])
@@ -134,9 +130,7 @@ def service_connection(key, mask):
                 text.append(" selecionou o nível " + received_message['content'])
                 
                 console.log(text)
-                
-                console.log(client_game.secret_word)
-                
+                #console.log(client_game.secret_word)
                 
                 message = pickle.dumps({
                     'secret_word': client_game.secret_word,
@@ -157,16 +151,19 @@ def service_connection(key, mask):
                 
                 console.log(text)
                 
-                # if result == 'Você acertou!':
-                #     # Envia mensagem para todos os clientes
-                #     for client in connected_clients:
-                #         received_message = pickle.dumps({
-                #             'type': 'update',
-                #             'content': f'{client_game.nickname} acertou a palavra'
-                #         })
+                if (result['game_over'] and result['winner']):
+                    
+                    # Envia mensagem para todos os clientes
+                    for client in connected_clients:
+                        if (client == client_addr):
+                            continue
                         
-                #         connected_clients[client].send(received_message)
+                        received_message = pickle.dumps({
+                            'type': 'update',
+                            'content': f'{client_game.nickname} acertou a palavra'
+                        })
                         
+                        connected_clients[client].send(received_message)
                 
                 message = pickle.dumps({
                     'type': 'guess_result',
@@ -205,7 +202,7 @@ def service_connection(key, mask):
             print("Sent from", data.addr)
             print(f"Echoing {data.outb!r} to {data.addr}")
             
-            sent = socket.send(data.outb)  # Should be ready to write
+            sent = socket.send(data.outb)
             data.outb = data.outb[sent:]
             
 if __name__ == "__main__":
@@ -219,7 +216,7 @@ if __name__ == "__main__":
                     service_connection(key, mask)
 
     except KeyboardInterrupt:
-        print("Caught keyboard interrupt, exiting")
+        console.print('Saindo... :wave:')
         
     finally:
         selector.close()
