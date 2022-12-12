@@ -2,6 +2,7 @@ import unicodedata
 
 dictionary = open('./database/hard.txt', 'r', encoding='utf-8').readlines()
 dictionary = [word.strip().upper() for word in dictionary]
+
 class Game:
 
     def __init__(self):
@@ -50,7 +51,6 @@ class Game:
                     'game_over': True,
                     'winner': False,
                     'message': 'Que pena! Suas tentativas se esgotaram',
-                    'secret_word': self.secret_word
                 }
          
             return {
@@ -66,7 +66,7 @@ class Game:
         self.difficulty = difficulty
         
     def set_secret_word(self, normal_level_word, hard_level_word):
-        if self.difficulty == 'Normal':
+        if self.difficulty == 'Médio':
             self.secret_word = normal_level_word
         else:
             self.secret_word = hard_level_word
@@ -75,7 +75,7 @@ class Game:
     # Se for difícil, os acentos são considerados.
     def get_word_to_be_compared(self):
         
-        if(self.difficulty == 'Normal'):
+        if(self.difficulty == 'Médio'):
             # Remove acentos e outros caracteres especiais
             return unicodedata.normalize('NFKD', self.secret_word).encode('ASCII', 'ignore').decode()
         

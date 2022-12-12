@@ -7,7 +7,6 @@ import time
 
 from rich.console import Console
 from rich.text import Text
-from rich.emoji import Emoji
 import rich.spinner as spinner
 
 from game import Game
@@ -51,7 +50,6 @@ except OSError:
                 style='bold red')
     exit()
 
-# To do: Permitir que o cliente escolha o nível de dificuldade
 hard_words = open('./database/hard.txt', 'r', encoding='utf-8').readlines()
 medium_words = open('./database/medium.txt', 'r', encoding='utf-8').readlines()
 
@@ -60,7 +58,7 @@ hard_day_word = hard_words[random.randint(0, len(hard_words))].strip()
 medium_day_word = medium_words[random.randint(0, len(medium_words))].strip()
 
 # Dicionarios que armazenarão o endereço do cliente seu respectivo jogo
-address_game = dict()
+game_address = dict()
 connected_clients = dict()
 
 def accept_wrapper(sock):
@@ -71,12 +69,14 @@ def accept_wrapper(sock):
     data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
     selector.register(conn, events, data=data)
+    
+    addr_str = f'{addr[0]}:{addr[1]}'
 
     # Criando o jogo
-    address_game[addr] = Game()
+    game_address[addr_str] = Game()
     
     # Adicionando o cliente na lista de clientes conectados
-    connected_clients[addr] = conn
+    connected_clients[addr_str] = conn
     
     new_game_message = pickle.dumps({
         'type': 'nickname_selection',
@@ -90,15 +90,16 @@ def accept_wrapper(sock):
 
 def service_connection(key, mask):
 
-    socket = key.fileobj
-    data = key.data
+    socket = key.fileobj # socket do cliente que enviou a mensagem 
+    data = key.data # dados do cliente que enviou a mensagem 
     
-    # int: o que vamos retornar para o cliente
+    # Se o evento for de leitura, então o cliente enviou uma mensagem
     if mask & selectors.EVENT_READ:
         received_message = socket.recv(BUFF_SIZE)
         
         client_addr = data.addr
-        client_game = address_game[client_addr]
+        client_addr = f'{client_addr[0]}:{client_addr[1]}'
+        client_game = game_address[client_addr]
         
         if received_message:
             received_message = pickle.loads(received_message)
@@ -109,7 +110,7 @@ def service_connection(key, mask):
                 text = Text("Novo usuário: ")
                 text.append(Text.assemble(received_message['content'], 
                                           style="bold blue"))
-                text.append(" | Endereço: " + str(client_addr))
+                text.append(" | Endereço: " + client_addr)
                 
                 console.log(text)
                 
@@ -123,14 +124,14 @@ def service_connection(key, mask):
             
             elif(received_message['type'] == 'difficulty_selection'):
                 client_game.set_difficulty(received_message['content'])
-                client_game.set_secret_word(hard_day_word, medium_day_word)
+                client_game.set_secret_word(medium_day_word, hard_day_word)
                 
                 text = Text()
                 text.append(Text.assemble(client_game.nickname, style="bold blue"))
                 text.append(" selecionou o nível " + received_message['content'])
                 
                 console.log(text)
-                #console.log(client_game.secret_word)
+                console.log("Palavra secreta: [bold green]", client_game.secret_word)
                 
                 message = pickle.dumps({
                     'secret_word': client_game.secret_word,
@@ -150,20 +151,6 @@ def service_connection(key, mask):
                 text.append(": " + received_message['content'])
                 
                 console.log(text)
-                
-                if (result['game_over'] and result['winner']):
-                    
-                    # Envia mensagem para todos os clientes
-                    for client in connected_clients:
-                        if (client == client_addr):
-                            continue
-                        
-                        received_message = pickle.dumps({
-                            'type': 'update',
-                            'content': f'{client_game.nickname} acertou a palavra'
-                        })
-                        
-                        connected_clients[client].send(received_message)
                 
                 message = pickle.dumps({
                     'type': 'guess_result',
@@ -195,6 +182,7 @@ def service_connection(key, mask):
             console.log(text)
             
             selector.unregister(socket)
+            connected_clients.pop(client_addr)
             socket.close()
 
     if mask & selectors.EVENT_WRITE:
@@ -207,6 +195,17 @@ def service_connection(key, mask):
             
 if __name__ == "__main__":
     try:
+        # timeout_start = time.time()
+
+        # while time.time() < timeout_start + 20:
+        #     # Print the time remaining
+        #     print(f"Tempo restante: {timeout_start + 20 - time.time():.2f}", end="\r")
+        #     test = 0
+        #     if test == 5:
+        #         break
+        #     test -= 1
+        
+         
         while True:
             events = selector.select(timeout=None)
             for key, mask in events:
@@ -216,7 +215,7 @@ if __name__ == "__main__":
                     service_connection(key, mask)
 
     except KeyboardInterrupt:
-        console.print('Saindo... :wave:')
+        console.log('Saindo... :wave:')
         
     finally:
         selector.close()

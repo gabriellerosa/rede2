@@ -56,7 +56,7 @@ def show_table(board, secret_word):
     for i in range(len(board), 6):
         table.add_row(*[f" " for letter in secret_word])
         
-    console.print(table)
+    console.print(table, justify='center')
 
 def clearConsole():
     
@@ -117,7 +117,7 @@ while True:
         questions = [inquirer.List(
                                    'difficulty', 
                                     message=received_message['content'], 
-                                    choices=['Normal', 'Difícil'], 
+                                    choices=['Médio', 'Difícil'], 
                                     carousel=True
                                     )]
         
@@ -125,7 +125,7 @@ while True:
         
         colored_difficulty = colored(
                                     selected_difficulty, 
-                                    'green' if selected_difficulty == 'Normal' 
+                                    'green' if selected_difficulty == 'Médio' 
                                     else 'red'
                                     )
         
@@ -162,16 +162,20 @@ while True:
             
             break
         
-        else:
-            guess = input('Digite a palavra: ')
-            guess = guess.strip().replace(' ', '').upper()
-        
-            message['type'] = 'guess'
-            message['content'] = guess
+        print(received_message['content']['message'])
+        guess = input('Digite a palavra: ')
+        guess = guess.strip().replace(' ', '').upper()
+    
+        message['type'] = 'guess'
+        message['content'] = guess
     
     # Atualização do servidor
     elif(msg_type == 'update'):
+        print("Atualização do servidor:")
         print(received_message['content'])
+        
+        message['type'] = 'update'
+        message['content'] = ''
     
     # Envia a mensagem ao servidor    
     message = pickle.dumps(message)
