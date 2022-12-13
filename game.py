@@ -13,7 +13,6 @@ class Game:
         self.difficulty = "" 
         self.nickname = ""
 
-    # Recebe uma word que é a string que representa o palpite feito pelo client
     def guess(self, guessed_word):
         
         validation = self.validate_word(guessed_word)
@@ -38,7 +37,6 @@ class Game:
         if(self.difficulty == 'Médio'):
             guessed_word = unicodedata.normalize('NFKD', guessed_word).encode('ASCII', 'ignore').decode()
         
-		# Se as palavras forem iguais, logo o jogo acaba pois a pessoa ganhou
         if (guessed_word == secret_word):
             return {
                 'game_over': True,
@@ -63,12 +61,15 @@ class Game:
 
 
     def show(self):
+        
         return self.board
     
     def set_difficulty(self, difficulty):
+        
         self.difficulty = difficulty
         
     def set_secret_word(self, normal_level_word, hard_level_word):
+        
         if self.difficulty == 'Médio':
             self.secret_word = normal_level_word
         else:

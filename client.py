@@ -21,9 +21,11 @@ wordle = '[green]W[yellow]O[white]R[green]D[yellow]L[white]E'
 selected_difficulty = None
 
 def remove_accents(word):
+    
     return unicodedata.normalize('NFKD', word).encode('ASCII', 'ignore').decode()
     
 def show_table(board, secret_word):
+    
     print('\n\n')
     table = Table(
                   show_header=False, 
@@ -157,6 +159,7 @@ while True:
     elif(msg_type == 'guess'):
         show_table(received_message['board'], received_message['secret_word'])
         
+        print()
         guess = input('Sua tentativa: ').strip().replace(' ', '').upper()
         
         message['type'] = 'guess'
