@@ -71,6 +71,8 @@ def show_table(board, secret_word):
         table.add_row(*[f" " for letter in secret_word])
         
     console.print(table, justify='center')
+    
+    print('\n\n')
 
 def clearConsole():
     
@@ -174,6 +176,8 @@ while True:
             else:
                 console.print('Parabéns, você acertou! :tada: :tada: :smiley:', justify='center', style='bold green')
             
+            print('\n\n')
+            
             message['type'] = 'game_over'
             message['content'] = ''
             
@@ -184,6 +188,8 @@ while True:
         
         
         console.print(received_message['content']['message'], justify='center', style='bold red')
+        
+        print('\n\n')
         
         guess = input('Sua tentativa: ')
         guess = guess.strip().replace(' ', '').upper()
