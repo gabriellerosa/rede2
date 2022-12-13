@@ -1,5 +1,5 @@
 # Wordle 
-Trata-se da implementação do Wordle, um jogo de advinhação de palavras, utilizando o Socket TCP. Este projeto representa a atividade prática sobre a Camada de Transporte realizada na disciplina 'CET098 - Rede de Computadores I' no semestre 2022.2. 
+Trata-se da implementação do **<span style="color:green">W</span><span style="color:yellow">o</span>r<span style="color:green">d</span><span style="color:yellow">l</span>e**, um jogo de advinhação de palavras, utilizando o Socket TCP. Este projeto representa a atividade prática sobre a Camada de Transporte realizada na disciplina 'CET098 - Rede de Computadores I' no semestre 2022.2. 
 
 Nesta implementação, o servidor escolhe uma palavra secreta aleatória de cinco letras da língua portuguesa, enquanto o cliente deve tentar adivinhá-la, restrito a 6 tentativas. 
 

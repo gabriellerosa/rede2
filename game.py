@@ -14,9 +14,9 @@ class Game:
         self.nickname = ""
 
     # Recebe uma word que é a string que representa o palpite feito pelo client
-    def guess(self, word):
+    def guess(self, guessed_word):
         
-        validation = self.validate_word(word)
+        validation = self.validate_word(guessed_word)
         
         if(not validation['ok']):
             return {
@@ -24,19 +24,22 @@ class Game:
                 'message': validation['message']
             }
             
-        if (word in self.board):
+        if (guessed_word in self.board):
             return {
                 'game_over': False,
                 'message': 'Você já tentou essa palavra!'
             }
         
         # É uma tentativa válida. Adiciona a palavra à lista de tentativas
-        self.board.append(word)
+        self.board.append(guessed_word)
         
         secret_word = self.get_word_to_be_compared()
         
+        if(self.difficulty == 'Médio'):
+            guessed_word = unicodedata.normalize('NFKD', guessed_word).encode('ASCII', 'ignore').decode()
+        
 		# Se as palavras forem iguais, logo o jogo acaba pois a pessoa ganhou
-        if (word == secret_word):
+        if (guessed_word == secret_word):
             return {
                 'game_over': True,
                 'winner': True,

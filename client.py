@@ -3,6 +3,7 @@ import socket
 import os
 import pickle
 import inquirer
+import unicodedata
 import time
 
 from rich.console import Console
@@ -17,9 +18,13 @@ from config import *
 console = Console()
 
 wordle = '[green]W[yellow]O[white]R[green]D[yellow]L[white]E'
+selected_difficulty = None
+
+def remove_accents(word):
+    return unicodedata.normalize('NFKD', word).encode('ASCII', 'ignore').decode()
     
 def show_table(board, secret_word):
-    
+    print('\n\n')
     table = Table(
                   show_header=False, 
                   title=wordle, 
@@ -33,11 +38,20 @@ def show_table(board, secret_word):
         for i in range(len(tried_word)):
             color = 'white'
             
-            if(tried_word[i] == secret_word[i]):
-                color = 'green'
-            elif tried_word[i] in secret_word:
-                color = 'yellow'
+            # Se a dificuuldade for média, compara-se as letras ignorando os acentos
+            if selected_difficulty == 'Média':
+                # tried_word[i] sem acento
+                if(remove_accents(tried_word[i]) == remove_accents(secret_word[i])):
+                    color = 'green'
+                elif remove_accents(tried_word[i]) in remove_accents(secret_word):
+                    color = 'yellow'
                 
+            else:
+                if(tried_word[i] == secret_word[i]):
+                    color = 'green'
+                elif tried_word[i] in secret_word:
+                    color = 'yellow'
+                    
             validated_word.append({
                 'letter': tried_word[i],
                 'color': color
@@ -89,6 +103,7 @@ except ConnectionRefusedError:
     console.log('O servidor não está rodando!', style='bold red')
     exit()
 
+
 while True:
     clearConsole()
     
@@ -101,6 +116,8 @@ while True:
     
     # Dicionário que será enviado ao servidor
     message = dict()
+    message['type'] = ''
+    message['content'] = ''
     
     # Escolha de nickname
     if(msg_type == 'nickname_selection'):
@@ -138,22 +155,25 @@ while True:
     elif(msg_type == 'guess'):
         show_table(received_message['board'], received_message['secret_word'])
         
-        guess = input().strip().replace(' ', '').upper()
+        guess = input('Sua tentativa: ').strip().replace(' ', '').upper()
         
         message['type'] = 'guess'
         message['content'] = guess
     
-    # Resultado da adivinhação
+    # Resultado da tentativa
     elif(msg_type == 'guess_result'):
         show_table(received_message['board'], received_message['secret_word'])
         
+        print()
         if(received_message['content']['game_over']):
-            print(received_message['content']['message'])
             
             if(not received_message['content']['winner']):
-                print('A palavra era: ' + received_message['content']['secret_word'])
+                console.print('Suas tentativas se esgorataram! :disappointed:', justify='center', style='bold red')
+                console.print('A palavra era: [bold green]' + received_message['secret_word'], justify='center')
                 
-                
+            else:
+                console.print('Parabéns, você acertou! :tada: :tada: :smiley:', justify='center', style='bold green')
+            
             message['type'] = 'game_over'
             message['content'] = ''
             
@@ -162,20 +182,14 @@ while True:
             
             break
         
-        print(received_message['content']['message'])
-        guess = input('Digite a palavra: ')
+        
+        console.print(received_message['content']['message'], justify='center', style='bold red')
+        
+        guess = input('Sua tentativa: ')
         guess = guess.strip().replace(' ', '').upper()
     
         message['type'] = 'guess'
         message['content'] = guess
-    
-    # Atualização do servidor
-    elif(msg_type == 'update'):
-        print("Atualização do servidor:")
-        print(received_message['content'])
-        
-        message['type'] = 'update'
-        message['content'] = ''
     
     # Envia a mensagem ao servidor    
     message = pickle.dumps(message)

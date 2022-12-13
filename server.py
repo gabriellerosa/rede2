@@ -195,17 +195,6 @@ def service_connection(key, mask):
             
 if __name__ == "__main__":
     try:
-        # timeout_start = time.time()
-
-        # while time.time() < timeout_start + 20:
-        #     # Print the time remaining
-        #     print(f"Tempo restante: {timeout_start + 20 - time.time():.2f}", end="\r")
-        #     test = 0
-        #     if test == 5:
-        #         break
-        #     test -= 1
-        
-         
         while True:
             events = selector.select(timeout=None)
             for key, mask in events:
