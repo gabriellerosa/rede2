@@ -68,6 +68,11 @@ def handle_new_client(sock):
 
     data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
     events = selectors.EVENT_READ | selectors.EVENT_WRITE
+
+    # Registra o socket do cliente para que ele seja monitorado pelo seletor.
+    # conn: socket do cliente
+    # events: eventos que serão monitorados
+    # data: dados do cliente
     selector.register(conn, events, data=data)
 
     addr_str = f'{addr[0]}:{addr[1]}'
@@ -216,11 +221,11 @@ if __name__ == "__main__":
                     # 1 = EVENT_READ, 2 = EVENT_WRITE, 3 = EVENT_READ | EVENT_WRITE
             '''
             for key, mask in events:
-                # Não há dados, então o socket é um novo cliente
+                # Não há dados sobre o socket, então é um novo client
                 if key.data is None:
                     handle_new_client(key.fileobj)
 
-                # O cliente já está conectado
+                # O client já está conectado
                 else:
                     service_connection(key, mask)
 
