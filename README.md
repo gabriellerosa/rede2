@@ -41,7 +41,7 @@ Cliente:
 python3 client.py
 ```
 
-### Funcionamento do server 
+### 
 ![Fluxograma do protocolo TCP/IP](./images/socket_protocol.png "Fluxograma do protocolo TCP/IP")
 
 - Step 1: Cria-se o objeto socket usando a função socket.socket(). A função .socket() recebe como argumento a especificação do tipo de protocolo. Sendo socket.SOCK_STREAM para TCP ou socket.SOCK_DGRAM para UDP 

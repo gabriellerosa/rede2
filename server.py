@@ -152,6 +152,7 @@ def service_connection(key, mask):
 
             elif (received_message['type'] == 'guess'):
                 result = client_game.guess(received_message['content'])
+
                 board = client_game.show()
 
                 text = Text("Tentativa de ")
