@@ -37,7 +37,7 @@ Em distros Linux:
 python3 -m venv venv && source venv/bin/activate
 ```
 
-#### 📦 Instale as dependências:
+#### Instalando as dependências:
 ```
 pip install -r requirements.txt
 ```
@@ -59,15 +59,18 @@ python3 client.py
 ## Fluxo do protocolo
 ![Fluxograma do protocolo TCP/IP](./images/socket_protocol.png "Fluxograma do protocolo TCP/IP")
 
-- Step 1: Cria-se o objeto socket usando a função socket.socket(). A função .socket() recebe como argumento a especificação do tipo de protocolo. Sendo socket.SOCK_STREAM para TCP ou socket.SOCK_DGRAM para UDP 
+#### Sobre o estabelecimento da conexão
+- Passo 1: Cria-se o objeto socket usando a função ```socket.socket()```. A função ```.socket()``` recebe como argumento a especificação do tipo de protocolo. Sendo ```socket.SOCK_STREAM``` para TCP ou ```socket.SOCK_DGRAM``` para UDP 
 
-- Step 2: O método .bind() é usado para associar um socket a uma conexão especifica e um número de porta específico 
+- Passo 2: O método ```.bind()``` é usado para associar um socket a uma conexão especifica e um número de porta específico 
 
-- Step 3: O método .listen() faz com que o server aceite conexões. Isso torna o serve um socket de "escuta".
+- Passo 3: O método ```.listen()``` faz com que o server aceite conexões. Isso torna o serve um socket de "escuta".
 
-- Step 4 e 5: Do lado do cliente também é criado um socket com o .socket(). No entanto, após a criação do socket o cliente deve chamar a função .connect() para estabelecer uma conexão com o server e iniciar uma via de mao dupla entre servidor <-> cliente. Esse passo é importante pois se assegura que cada lado da conexão é atingivél pela rede, em outras palavras isso significa que o cliente consegue acessar o servidor e vice-versa.
+- Passo 4 e 5: Do lado do cliente também é criado um socket com o ```.socket()```. No entanto, após a criação do socket o cliente deve chamar a função ```.connect()``` para estabelecer uma conexão com o server e iniciar uma via de mao dupla entre servidor <-> cliente. Esse passo é importante pois se assegura que cada lado da conexão é atingivél pela rede, em outras palavras isso significa que o cliente consegue acessar o servidor e vice-versa.
 
-- Step 5: Quando o cliente se conecta, o servidor chama .accept() para aceitar ou completar a conexão.
+- Passo 5: Quando o cliente se conecta, o servidor chama ```.accept()``` para aceitar ou completar a conexão.
+
+Após o estabelecimento da conexão transmissão de dados é feita através dos métodos ```.send()``` e ```.recv()```, que são usados para enviar e receber dados, respectivamente. As mensagens seguem o padrão que descrito no tópico seguinte.
 
 ### :memo: Padronização de mensagens
 
