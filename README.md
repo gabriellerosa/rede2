@@ -69,7 +69,7 @@ python3 client.py
 
 - Passo 4 e 5: Do lado do cliente também é criado um socket com o ```.socket()```. No entanto, após a criação do socket o cliente deve chamar a função ```.connect()``` para estabelecer uma conexão com o server e iniciar uma via de mao dupla entre servidor <-> cliente. Esse passo é importante pois se assegura que cada lado da conexão é atingivél pela rede, em outras palavras isso significa que o cliente consegue acessar o servidor e vice-versa.
 
-- Passo 5: Quando o cliente se conecta, o servidor chama ```.accept()``` para aceitar ou completar a conexão.
+- Passo 6: Quando o cliente se conecta, o servidor chama ```.accept()``` para aceitar ou completar a conexão.
 
 Após o estabelecimento da conexão transmissão de dados é feita através dos métodos ```.send()``` e ```.recv()```, que são usados para enviar e receber dados, respectivamente. As mensagens seguem o padrão que descrito no tópico seguinte.
 
