@@ -36,6 +36,10 @@ def show_table(board, secret_word):
         show_lines=True,
     )
 
+    freq = {}
+    for letter in secret_word:
+        freq[letter] = freq.get(letter, 0) + 1
+
     for tried_word in board:
         validated_word = list()
 
@@ -44,16 +48,18 @@ def show_table(board, secret_word):
 
             # Se a dificuuldade for média, compara-se as letras ignorando os acentos
             if selected_difficulty == 'Média':
-                # tried_word[i] sem acento
                 if (remove_accents(tried_word[i]) == remove_accents(secret_word[i])):
                     color = 'green'
-                elif remove_accents(tried_word[i]) in remove_accents(secret_word):
+                    freq[tried_word[i]] -= 1
+                elif remove_accents(tried_word[i]) in remove_accents(secret_word) and freq[tried_word[i]]:
                     color = 'yellow'
 
             else:
                 if (tried_word[i] == secret_word[i]):
                     color = 'green'
-                elif tried_word[i] in secret_word:
+                    freq[tried_word[i]] -= 1
+
+                elif tried_word[i] in secret_word and freq[tried_word[i]]:
                     color = 'yellow'
 
             validated_word.append({

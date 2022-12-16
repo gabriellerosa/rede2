@@ -41,7 +41,7 @@ Cliente:
 python3 client.py
 ```
 
-### 
+### Fluxo do protocolo
 ![Fluxograma do protocolo TCP/IP](./images/socket_protocol.png "Fluxograma do protocolo TCP/IP")
 
 - Step 1: Cria-se o objeto socket usando a função socket.socket(). A função .socket() recebe como argumento a especificação do tipo de protocolo. Sendo socket.SOCK_STREAM para TCP ou socket.SOCK_DGRAM para UDP 
@@ -53,6 +53,84 @@ python3 client.py
 - Step 4 e 5: Do lado do cliente também é criado um socket com o .socket(). No entanto, após a criação do socket o cliente deve chamar a função .connect() para estabelecer uma conexão com o server e iniciar uma via de mao dupla entre servidor <-> cliente. Esse passo é importante pois se assegura que cada lado da conexão é atingivél pela rede, em outras palavras isso significa que o cliente consegue acessar o servidor e vice-versa.
 
 - Step 5: Quando o cliente se conecta, o servidor chama .accept() para aceitar ou completar a conexão.
+
+### Padronização de mensagens
+
+As mensagens trocadas entre o cliente e o servidor são realizadas através de dicionários em formato JSON. Para que a mensagem seja transmitida através do socket, os dicionários são convertidos em bytestreams, com uso da função ```pickle.dumps()```.
+
+#### Mensagens do cliente para o servidor
+
+- **Seleção de nickname**
+
+```python
+{
+  'type': 'nickname_selection'
+  'content': nickname
+}
+```
+
+- **Escolha do nível de dificuldade**
+
+```python
+{
+  'type': 'difficulty_selection'
+  'content': selected_difficulty
+}
+``` 
+
+- **Tentativa de adivinhar a palavra**
+
+```python
+{
+  'type': 'guess'
+  'content': guessed_word
+}
+```
+
+
+#### Mensagens do servidor para o cliente
+
+- **Seleção de nickname**
+
+```python
+{
+  'type': 'nickname_selection',
+  'content': 'Escolha um nickname para começar a jogar!'
+}
+```
+
+- **Escolha do nível de dificuldade**
+
+```python
+{
+  'type': 'difficulty_selection',
+  'content': 'Selecione o nível de dificuldade',
+  'options': ['Médio', 'Difícil']
+}
+``` 
+
+- **Tentativa de adivinhar a palavra**
+
+```python
+{
+  'secret_word': client_game.secret_word,
+  'type': 'guess',
+  'content': 'Adivinhe a palavra',
+  'board': client_game.show()
+}
+```
+
+- **Resultado da tentativa de adivinhação**
+
+```python
+{
+  'type': 'guess_result',
+  'content': result,
+  'board': board,
+  'secret_word': client_game.secret_word,
+}
+```
+
 
 
 ## Discentes

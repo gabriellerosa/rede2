@@ -89,7 +89,6 @@ def handle_new_client(sock):
     })
 
     conn.send(new_game_message)
-
     console.log(f'[bold green]Conexão aceita de {addr[0]}:{addr[1]}')
 
 
