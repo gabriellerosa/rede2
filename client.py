@@ -54,6 +54,7 @@ def show_table(board, secret_word):
                     freq_c[tried_word[i]] -= 1
                 elif remove_accents(tried_word[i]) in remove_accents(secret_word) and freq_c[tried_word[i]]:
                     color = 'yellow'
+                    freq_c[tried_word[i]] -= 1
 
             else:
                 if (tried_word[i] == secret_word[i]):
@@ -62,6 +63,7 @@ def show_table(board, secret_word):
 
                 elif tried_word[i] in secret_word and freq_c[tried_word[i]]:
                     color = 'yellow'
+                    freq_c[tried_word[i]] -= 1
 
             validated_word.append({
                 'letter': tried_word[i],
