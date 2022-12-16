@@ -54,7 +54,7 @@ python3 client.py
 
 - Step 5: Quando o cliente se conecta, o servidor chama .accept() para aceitar ou completar a conexão.
 
-### Padronização de mensagens
+### :memo: Padronização de mensagens
 
 As mensagens trocadas entre o cliente e o servidor são realizadas através de dicionários em formato JSON. Para que a mensagem seja transmitida através do socket, os dicionários são convertidos em bytestreams, com uso da função ```pickle.dumps()```.
 
@@ -137,12 +137,12 @@ As mensagens trocadas entre o cliente e o servidor são realizadas através de d
 <ul>
   <li>
     <a href="https://github.com/gabriellerosa" target="_blank">
-      Gabrielle Rosa
+      Gabrielle Rosa :pouting_cat:
     </a>
   </li>
   <li>
     <a href="https://github.com/danieljcksn" target="_blank">
-      Daniel Jackson
+      Daniel Jackson :trollface:
     </a>
   </li>
 </ul>
