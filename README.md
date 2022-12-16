@@ -97,7 +97,7 @@ As mensagens trocadas entre o cliente e o servidor são realizadas através de d
 }
 ``` 
 
-- **Tentativa de adivinhar a palavra**
+- **Tentativa de adivinhação da palavra**
 
 ```python
 {
