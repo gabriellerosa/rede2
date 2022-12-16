@@ -47,28 +47,33 @@ def show_table(board, secret_word):
         for i in range(len(tried_word)):
             color = 'white'
 
-            # Se a dificuuldade for média, compara-se as letras ignorando os acentos
+            # Se a dificuldade for média, compara-se as letras ignorando os acentos
             if selected_difficulty == 'Média':
                 if (remove_accents(tried_word[i]) == remove_accents(secret_word[i])):
                     color = 'green'
                     freq_c[tried_word[i]] -= 1
-                elif remove_accents(tried_word[i]) in remove_accents(secret_word) and freq_c[tried_word[i]]:
-                    color = 'yellow'
-                    freq_c[tried_word[i]] -= 1
-
             else:
                 if (tried_word[i] == secret_word[i]):
                     color = 'green'
-                    freq_c[tried_word[i]] -= 1
-
-                elif tried_word[i] in secret_word and freq_c[tried_word[i]]:
-                    color = 'yellow'
                     freq_c[tried_word[i]] -= 1
 
             validated_word.append({
                 'letter': tried_word[i],
                 'color': color
             })
+
+        for i in range(len(tried_word)):
+            color = 'white'
+
+            # Se a dificuldade for média, compara-se as letras ignorando os acentos
+            if selected_difficulty == 'Média':
+                if (remove_accents(tried_word[i]) != remove_accents(secret_word[i]) and remove_accents(tried_word[i]) in remove_accents(secret_word) and freq_c[tried_word[i]]):
+                    validated_word[i]['color'] = 'yellow'
+                    freq_c[tried_word[i]] -= 1
+            else:
+                if (tried_word[i] != secret_word[i] and tried_word[i] in secret_word) and freq_c[tried_word[i]]:
+                    validated_word[i]['color'] = 'yellow'
+                    freq_c[tried_word[i]] -= 1
 
         table.add_row(
             *[
