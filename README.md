@@ -5,17 +5,17 @@ Nesta implementação, o servidor escolhe uma palavra secreta aleatória de cinc
 
 A lista de palavras utilizadas foi obtida no repositório de palavras do projeto [Dicionário br.ispell](https://www.ime.usp.br/~pf/dicios/).
 
-## Demonstração
+## :zap: Demonstração
 O jogo é executado em duas abas distintas do terminal, uma para o servidor e outra para o cliente.
 
-### Execução do servidor
+#### Execução do servidor
 O servidor é inicializado e fica aguardando a conexão de um cliente. A estilização do terminal é feita com a biblioteca [Righ](https://github.com/Textualize/rich).
 ![Executando o servidor](./images/running_server.gif "Executando o servidor")
 
-### Cliente jogando
+#### Cliente jogando
 ![Executando do cliente](./images/client_playing.gif "Executando do cliente")
 
-### Feedback do servidor
+#### Feedback do servidor
 No lado do servidor, há um feedback de cada ação realizada pelo cliente.
 ![Feedback do servidor](./images/server_feedback.gif "Feedback do servidor")
 
@@ -56,7 +56,7 @@ Cliente:
 python3 client.py
 ```
 
-## Fluxo do protocolo
+## :wrench: Fluxo do protocolo
 ![Fluxograma do protocolo TCP/IP](./images/socket_protocol.png "Fluxograma do protocolo TCP/IP")
 
 #### Sobre o estabelecimento da conexão
