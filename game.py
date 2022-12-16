@@ -58,7 +58,7 @@ class Game:
 
             return {
                 'game_over': False,
-                'message': 'Palavra incoreta :( Tente novamente!'
+                'message': 'Palavra incorreta :( Tente novamente!'
             }
 
     def show(self):

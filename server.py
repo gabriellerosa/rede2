@@ -56,7 +56,7 @@ medium_words = open('./database/medium.txt', 'r', encoding='utf-8').readlines()
 hard_day_word = hard_words[random.randint(0, len(hard_words))].strip()
 medium_day_word = medium_words[random.randint(0, len(medium_words))].strip()
 
-# Dicionarios que armazenarão o endereço do cliente seu respectivo jogo
+# Dicionários que armazenarão o endereço do cliente seu respectivo jogo
 game_address = dict()
 connected_clients = dict()
 
@@ -98,7 +98,7 @@ def service_connection(key, mask):
     socket = key.fileobj  # socket do cliente que enviou a mensagem
     data = key.data  # dados do cliente que enviou a mensagem
 
-    # Se o evento for de leitura, então o cliente enviou uma mensagem
+    # O cliente enviou uma mensagem
     if mask & selectors.EVENT_READ:
         received_message = socket.recv(BUFF_SIZE)
 
@@ -220,12 +220,12 @@ if __name__ == "__main__":
                         
                     # 1 = EVENT_READ, 2 = EVENT_WRITE, 3 = EVENT_READ | EVENT_WRITE
             '''
+
             for key, mask in events:
                 # Não há dados sobre o socket, então é um novo client
                 if key.data is None:
                     handle_new_client(key.fileobj)
 
-                # O client já está conectado
                 else:
                     service_connection(key, mask)
 
