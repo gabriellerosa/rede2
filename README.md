@@ -5,6 +5,21 @@ Nesta implementação, o servidor escolhe uma palavra secreta aleatória de cinc
 
 A lista de palavras utilizadas foi obtida no repositório de palavras do projeto [Dicionário br.ispell](https://www.ime.usp.br/~pf/dicios/).
 
+## Demonstração
+O jogo é executado em duas abas distintas do terminal, uma para o servidor e outra para o cliente.
+
+### Execução do servidor
+O servidor é inicializado e fica aguardando a conexão de um cliente. A estilização do terminal é feita com a biblioteca [Righ](https://github.com/Textualize/rich).
+![Executando o servidor](./images/running_server.gif "Executando o servidor")
+
+### Cliente jogando
+![Executando do cliente](./images/client_playing.gif "Executando do cliente")
+
+### Feedback do servidor
+No lado do servidor, há um feedback de cada ação realizada pelo cliente.
+![Feedback do servidor](./images/server_feedback.gif "Feedback do servidor")
+
+
 ## 🚀 Executando o projeto
 
 Para a execução do projeto, é necessário ter o Python instalado em sua máquina e pip, seu gerenciador de pacotes. Para isso, acesse o site oficial do Python e siga as instruções de instalação para o seu sistema operacional: https://www.python.org/downloads/.
@@ -22,7 +37,7 @@ Em distros Linux:
 python3 -m venv venv && source venv/bin/activate
 ```
 
-#### Instale as dependências:
+#### 📦 Instale as dependências:
 ```
 pip install -r requirements.txt
 ```
@@ -41,7 +56,7 @@ Cliente:
 python3 client.py
 ```
 
-### Fluxo do protocolo
+## Fluxo do protocolo
 ![Fluxograma do protocolo TCP/IP](./images/socket_protocol.png "Fluxograma do protocolo TCP/IP")
 
 - Step 1: Cria-se o objeto socket usando a função socket.socket(). A função .socket() recebe como argumento a especificação do tipo de protocolo. Sendo socket.SOCK_STREAM para TCP ou socket.SOCK_DGRAM para UDP 
