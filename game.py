@@ -3,6 +3,13 @@ import unicodedata
 dictionary = open('./database/hard.txt', 'r', encoding='utf-8').readlines()
 dictionary = [word.strip().upper() for word in dictionary]
 
+for word in dictionary:
+    if (word != unicodedata.normalize('NFKD', word).encode('ASCII', 'ignore').decode()):
+        word = unicodedata.normalize('NFKD', word).encode(
+            'ASCII', 'ignore').decode()
+
+        dictionary.append(word)
+
 
 class Game:
 
